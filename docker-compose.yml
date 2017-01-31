@@ -1,0 +1,34 @@
+version: '2'
+services:
+  mosca:
+    image: matteocollina/mosca
+    ports:
+      - "8080:80"
+      - "1883:1883"
+
+  random-sensors:
+    build: docker/randomsensors
+    depends_on:
+      - mosca
+
+  mongodb:
+    image: mongo
+    ports:
+      - "27017:27017"
+
+  sensors-to-db:
+    build: docker/sensorstodb
+    depends_on:
+      - mongodb
+      - mosca
+
+  api-server:
+    build: docker/apiserver
+    depends_on:
+      - mongodb
+
+  mqtt-displayer:
+    build: docker/mqttdisplayer
+    depends_on:
+      - api-server
+      - mosca

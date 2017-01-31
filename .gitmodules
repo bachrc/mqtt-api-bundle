@@ -1,0 +1,3 @@
+[submodule "docker/randomsensors"]
+	path = docker/randomsensors
+	url = git://github.com/pigne/random-sensors.git

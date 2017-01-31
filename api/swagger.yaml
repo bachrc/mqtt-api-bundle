@@ -1,0 +1,132 @@
+---
+swagger: "2.0"
+info:
+  description: "Récupérez les informations des capteurs stockés dans la ba de donné\
+    es."
+  version: "0.1.0"
+  title: "MQTT API"
+basePath: "/v1"
+schemes:
+- "https"
+produces:
+- "application/json"
+paths:
+  /sensors/search:
+    get:
+      summary: "Liste des capteurs"
+      description: "Cette entrée d'API permet d'obtenir la liste des capteurs répondant\
+        \ à des\ncritères de recherche comme spécifié dans la requête\n"
+      operationId: "sensorsSearchGET"
+      parameters:
+      - name: "after"
+        in: "query"
+        description: "Les capteurs enregistrés après cette date."
+        required: false
+        type: "string"
+        format: "date-time"
+      - name: "before"
+        in: "query"
+        description: "Les capteurs enregistrés avant cette date."
+        required: false
+        type: "string"
+        format: "date-time"
+      responses:
+        200:
+          description: "Un tableau de Sensor répondant aux critères de recherche."
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Sensor"
+        default:
+          description: "Erreur inattendue."
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "Default"
+  /sensors/modify:
+    post:
+      summary: "Modifie les informations d'un capteur"
+      description: "Lors de la mise en fonctionnement d'un capteur, on peut vouloir\
+        \ modifier\nses informations dans la base de données, comme son emplacement,\
+        \ etc.\nCe sont des données propres au capteur, qui ne dépendent pas des relevé\
+        s.\n"
+      operationId: "sensorsModifyPOST"
+      parameters:
+      - name: "id"
+        in: "query"
+        description: "L'identifiant du capteur"
+        required: true
+        type: "string"
+      - name: "name"
+        in: "query"
+        description: "Le nouveau nom du capteur"
+        required: false
+        type: "string"
+      - name: "location"
+        in: "query"
+        description: "La localisation du capteur"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "Le retour de la requête"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Return"
+        default:
+          description: "Unexpected error"
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "Default"
+definitions:
+  Sensor:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        description: "Identifiant du capteur."
+      name:
+        type: "string"
+        description: "Nom du capteur."
+      location:
+        type: "string"
+        description: "La localisation du capteur."
+      type:
+        type: "string"
+        description: "Le type de valeurs du capteur."
+      measures:
+        type: "array"
+        items:
+          $ref: "#/definitions/Measure"
+  Measure:
+    type: "object"
+    properties:
+      sensor_id:
+        type: "string"
+        description: "Identifiant du capteur rattaché"
+      date:
+        type: "string"
+        format: "date-time"
+        description: "Date à laquelle la valeur a été reçue"
+      value:
+        type: "string"
+        description: "Valeur relevée."
+  Return:
+    type: "object"
+    properties:
+      success:
+        type: "boolean"
+        description: "Si l'opération s'est déroulée avec succès ou non."
+      message:
+        type: "string"
+        description: "Message renvoyé pour décrire le déroulement de l'opération."
+  Error:
+    type: "object"
+    properties:
+      code:
+        type: "integer"
+        format: "int32"
+      message:
+        type: "string"
+      fields:
+        type: "string"
