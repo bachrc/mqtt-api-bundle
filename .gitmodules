@@ -1,3 +1,6 @@
 [submodule "docker/randomsensors"]
 	path = docker/randomsensors
 	url = git://github.com/pigne/random-sensors.git
+[submodule "docker/sensorstodb"]
+	path = docker/sensorstodb
+	url = git://github.com/pigne/sensors-to-db.git
