@@ -23,7 +23,7 @@ services:
       - mosca
 
   api-server:
-    build: docker/apiserver
+    build: .
     depends_on:
       - mongodb
 

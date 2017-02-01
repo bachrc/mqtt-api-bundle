@@ -4,3 +4,6 @@
 [submodule "docker/sensorstodb"]
 	path = docker/sensorstodb
 	url = git://github.com/pigne/sensors-to-db.git
+[submodule "docker/mqttdisplayer"]
+	path = docker/mqttdisplayer
+	url = git://github.com/bachrc/mqtt-node-displayer.git
