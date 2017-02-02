@@ -2,9 +2,6 @@ version: '2'
 services:
   mosca:
     image: matteocollina/mosca
-    ports:
-      - "8080:80"
-      - "1883:1883"
 
   random-sensors:
     build: docker/randomsensors
@@ -18,14 +15,26 @@ services:
 
   sensors-to-db:
     build: docker/sensorstodb
+    environment:
+      - SENSORS_TO_DB_DB=mongodb://mongodb:27017/InternetOfStuff
+      - SENSORS_TO_DB_BROKER=ws://mosca
     depends_on:
       - mongodb
       - mosca
 
   api-server:
     build: .
+    entrypoint: /usr/src/app/entrypoint.sh
+    command: [node, index.js]
+    environment:
+      - SENSORS_TO_DB_DB=mongodb://mongodb:27017/InternetOfStuff
+      - SENSORS_TO_DB_BROKER=ws://mosca
+    ports:
+      - "8080:8080"
     depends_on:
       - mongodb
+      - random-sensors
+      - sensors-to-db
 
   mqtt-displayer:
     build: docker/mqttdisplayer

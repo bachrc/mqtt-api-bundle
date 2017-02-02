@@ -32,11 +32,11 @@ paths:
         format: "date-time"
       responses:
         200:
-          description: "Un tableau de Sensor répondant aux critères de recherche."
+          description: "Un tableau de Measure répondant aux critères de recherche."
           schema:
             type: "array"
             items:
-              $ref: "#/definitions/Sensor"
+              $ref: "#/definitions/Measure"
         default:
           description: "Erreur inattendue."
           schema:
@@ -108,6 +108,9 @@ definitions:
         type: "string"
         format: "date-time"
         description: "Date à laquelle la valeur a été reçue"
+      type:
+        type: "string"
+        description: "Type de valeur relevée"
       value:
         type: "string"
         description: "Valeur relevée."
