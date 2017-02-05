@@ -1,10 +1,11 @@
 'use strict';
 
 var app = require('connect')();
-var config = require('./src/config');
 var http = require('http');
-var mongoose = require('mongoose');
+
+var config = require('./src/config');
 var swaggerTools = require('swagger-tools');
+var mongoose = require('mongoose');
 var jsyaml = require('js-yaml');
 var fs = require('fs');
 var serverPort = 8080;
@@ -13,7 +14,7 @@ var serverPort = 8080;
 var options = {
   swaggerUi: '/swagger.json',
   controllers: './src/controllers',
-  useStubs: process.env.NODE_ENV === 'development'  // Conditionally turn on stubs (mock mode)
+  useStubs: process.env.NODE_ENV === 'development' // Conditionally turn on stubs (mock mode)
 };
 
 mongoose.connect(config.mongoAddress);

@@ -4,10 +4,10 @@ var url = require('url');
 
 var Default = require('./DefaultService');
 
-module.exports.sensorsModifyPOST = function sensorsModifyPOST (req, res, next) {
-  Default.sensorsModifyPOST(req.swagger.params, res, next);
+module.exports.sensorsSensor_idGET = function sensorsSensor_idGET(req, res, next) {
+    Default.sensorsSensor_idGET(req.swagger.params, res, next);
 };
 
-module.exports.sensorsSearchGET = function sensorsSearchGET (req, res, next) {
-  Default.sensorsSearchGET(req.swagger.params, res, next);
+module.exports.sensorsSensor_idModifyPOST = function sensorsSensor_idModifyPOST(req, res, next) {
+    Default.sensorsSensor_idModifyPOST(req.swagger.params, res, next);
 };

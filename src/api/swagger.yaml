@@ -3,7 +3,7 @@ swagger: "2.0"
 info:
   description: "Récupérez les informations des capteurs stockés dans la ba de donné\
     es."
-  version: "0.1.0"
+  version: "0.2.0"
   title: "MQTT API"
 basePath: "/v1"
 schemes:
@@ -11,13 +11,18 @@ schemes:
 produces:
 - "application/json"
 paths:
-  /sensors/search:
+  /sensors/{sensor_id}:
     get:
-      summary: "Liste des capteurs"
+      summary: "Liste des mesures relevées par un capteur"
       description: "Cette entrée d'API permet d'obtenir la liste des capteurs répondant\
         \ à des\ncritères de recherche comme spécifié dans la requête\n"
-      operationId: "sensorsSearchGET"
+      operationId: "sensorsSensor_idGET"
       parameters:
+      - name: "sensor_id"
+        in: "path"
+        description: "L'id du capteur pour lequel effectuer la recherche"
+        required: true
+        type: "string"
       - name: "after"
         in: "query"
         description: "Les capteurs enregistrés après cette date."
@@ -30,29 +35,35 @@ paths:
         required: false
         type: "string"
         format: "date-time"
+      - name: "limit"
+        in: "query"
+        description: "La limite de résultats renvoyés"
+        required: false
+        type: "integer"
+        format: "int32"
       responses:
         200:
-          description: "Un tableau de Measure répondant aux critères de recherche."
+          description: "Un tableau de Sensor répondant aux critères de recherche."
           schema:
             type: "array"
             items:
-              $ref: "#/definitions/Measure"
+              $ref: "#/definitions/Sensor"
         default:
           description: "Erreur inattendue."
           schema:
             $ref: "#/definitions/Error"
       x-swagger-router-controller: "Default"
-  /sensors/modify:
+  /sensors/{sensor_id}/modify:
     post:
       summary: "Modifie les informations d'un capteur"
       description: "Lors de la mise en fonctionnement d'un capteur, on peut vouloir\
         \ modifier\nses informations dans la base de données, comme son emplacement,\
         \ etc.\nCe sont des données propres au capteur, qui ne dépendent pas des relevé\
         s.\n"
-      operationId: "sensorsModifyPOST"
+      operationId: "sensorsSensor_idModifyPOST"
       parameters:
-      - name: "id"
-        in: "query"
+      - name: "sensor_id"
+        in: "path"
         description: "L'identifiant du capteur"
         required: true
         type: "string"
@@ -108,9 +119,6 @@ definitions:
         type: "string"
         format: "date-time"
         description: "Date à laquelle la valeur a été reçue"
-      type:
-        type: "string"
-        description: "Type de valeur relevée"
       value:
         type: "string"
         description: "Valeur relevée."

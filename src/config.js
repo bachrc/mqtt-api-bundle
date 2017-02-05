@@ -1,4 +1,4 @@
-let mongo = "mongodb://mongodb:27017/InternetOfStuff";
+let mongo = "mongodb://localhost:27017/test";
 
 if(typeof process.env.SENSORS_TO_DB_DB !== "undefined"){
     mongo = process.env.SENSORS_TO_DB_DB;
