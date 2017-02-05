@@ -56,11 +56,10 @@ exports.sensorsSensor_idModifyPOST = function (args, res, next) {
         "success": true,
         "message": "aeiou"
     }];
-    if (Object.keys(examples).length > 0) {
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
+    if(typeof args.sensor_id.value === "undefined") {
+        res.end(Errors.error(1, "Champ nécessaire manquant", ["sensor_id"]));
     } else {
-        res.end();
+        Requests.modifySensor(args, res);
     }
 };
 

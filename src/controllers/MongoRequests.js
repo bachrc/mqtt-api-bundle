@@ -2,6 +2,7 @@
  * Created by Yohann Bacha on 02/02/17.
  */
 let Errors = require('../response/Error');
+let Returns = require('../response/Return');
 
 let config = require('../config');
 
@@ -22,6 +23,10 @@ function getMeasures (args, res) {
         res.end(Errors.error(4, "Argument du sensor_id manquant.", "sensor_id"));
     }
 
+    doesSensorsExists(sensor_id, () => {
+        res.end(Errors.error(6, "Sensor inexistant.", "sensor_id"));
+    });
+
     Measure.find({
         date: {
             $gt: borne_inferieure,
@@ -41,6 +46,54 @@ function getMeasures (args, res) {
     });
 }
 
+function doesSensorsExists(sensor_id, callbackNo, callbackYes = () => {}) {
+    Sensor.count({
+        sensor_id: sensor_id
+    }, (err, count) => {
+        if(count > 0) {
+            callbackYes();
+        } else {
+            callbackNo();
+        }
+    })
+}
+
+function modifySensor(args, res) {
+    let sensor_id = args.sensor_id.value;
+    let update = {};
+
+    if(!sensor_id) {
+        res.end(Errors.error(4, "Argument du sensor_id manquant.", "sensor_id"));
+    }
+
+    doesSensorsExists(sensor_id, () => {
+        res.end(Errors.error(6, "Sensor inexistant.", "sensor_id"));
+    });
+
+    if(!args.name.value && !args.location.value) {
+        res.end(Errors.error(5, "Veuillez renseigner au moins un élément à modifier.", ""));
+    } else {
+        if(args.name.value)
+            update.name = args.name.value;
+
+        if(args.location.value)
+            update.location = args.location.value;
+    }
+
+    Sensor.update({sensor_id : sensor_id}, update, {multi : false}, (err, numAffected) => {
+        if(err) {
+            res.end(Errors.error(3, "Erreur lors de la requête vers la base de données : \n" + JSON.stringify(err, null, 4)));
+        } else {
+            if(numAffected == 0) {
+                res.end(Returns.return(false, "La mise à jour n'a pas eu lieu."))
+            } else {
+                res.end(Returns.return(true, "La mise a jour a été effectuée."))
+            }
+        }
+    })
+}
+
 module.exports = {
-    getMeasures : getMeasures
+    getMeasures : getMeasures,
+    modifySensor : modifySensor
 };
