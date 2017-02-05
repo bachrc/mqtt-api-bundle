@@ -6,10 +6,11 @@ let Returns = require('../response/Return');
 
 let config = require('../config');
 
+let Sensor = require('../model/Sensor');
 let Measure = require('../model/Measure');
 let mongoose = require('mongoose');
 
-function getMeasures (args, res) {
+function getSensorBeforeMeasures (args, res) {
     let borne_inferieure = Date.parse(args.after.value) || new Date(0);
     let borne_superieure = Date.parse(args.before.value) || new Date(Date.now() + 1000 * 60 * 60);
     let sensor_id = args.sensor_id.value;
@@ -23,14 +24,23 @@ function getMeasures (args, res) {
         res.end(Errors.error(4, "Argument du sensor_id manquant.", "sensor_id"));
     }
 
-    doesSensorsExists(sensor_id, () => {
-        res.end(Errors.error(6, "Sensor inexistant.", "sensor_id"));
+    Sensor.findOne({_id: sensor_id}, (err, sensorResult) => {
+        if(err) {
+            res.end(Errors.error(3, "Erreur lors de la requête vers la base de données : \n" + JSON.stringify(err)));
+        } else if (!sensorResult) {
+            res.end(Errors.error(6, "Sensor inexistant.", "sensor_id"))
+        } else {
+            getMeasuresAfterSensor(sensorResult, res, borne_inferieure, borne_superieure, sensor_id, limit);
+        }
     });
+}
 
+function getMeasuresAfterSensor(sensor, res, borne_inf, borne_sup, sensor_id, limit) {
+    console.log(sensor);
     Measure.find({
         date: {
-            $gt: borne_inferieure,
-            $lt: borne_superieure
+            $gt: borne_inf,
+            $lt: borne_sup
         },
         sensor_id: sensor_id
     }).
@@ -39,22 +49,25 @@ function getMeasures (args, res) {
     select("sensor_id date type value").
     exec((err, results) => {
         if(err) {
-            res.end(Errors.error(3, "Erreur lors de la requête vers la base de données : \n" + JSON.stringify(err, null, 4)));
+            res.end(Errors.error(3, "Erreur lors de la requête vers la base de données : \n" + JSON.stringify(err)));
         } else {
-            res.end(JSON.stringify(results, null, 4));
+            res.end(JSON.stringify({
+                sensor,
+                measures : results
+            }, null, 4));
         }
     });
 }
 
 function doesSensorsExists(sensor_id, callbackNo, callbackYes = () => {}) {
     Sensor.count({
-        sensor_id: sensor_id
+        _id: sensor_id
     }, (err, count) => {
-        if(count > 0) {
-            callbackYes();
-        } else {
+        if(err || count == 0)
             callbackNo();
-        }
+        else
+            callbackYes();
+
     })
 }
 
@@ -90,10 +103,10 @@ function modifySensor(args, res) {
                 res.end(Returns.return(true, "La mise a jour a été effectuée."))
             }
         }
-    })
+    });
 }
 
 module.exports = {
-    getMeasures : getMeasures,
+    getMeasures : getSensorBeforeMeasures,
     modifySensor : modifySensor
 };
