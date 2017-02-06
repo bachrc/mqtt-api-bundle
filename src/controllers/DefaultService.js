@@ -3,6 +3,18 @@
 var Errors = require('../response/Error');
 var Requests = require('./MongoRequests');
 
+exports.sensorsGET = function(args, res, next) {
+    /**
+     * Liste des capteurs recensés
+     * Cette entrée d'API permet de recevoir les différents capteurs.
+     *
+     * limit Integer La limite de Sensors renvoyés (optional)
+     * returns List
+     **/
+
+    Requests.getSensors(args, res);
+};
+
 exports.sensorsSensor_idGET = function (args, res, next) {
     /**
      * Liste des mesures relevées par un capteur

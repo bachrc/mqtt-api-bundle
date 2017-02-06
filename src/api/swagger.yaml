@@ -11,6 +11,30 @@ schemes:
 produces:
 - "application/json"
 paths:
+  /sensors:
+    get:
+      summary: "Liste des capteurs recensés"
+      description: "Cette entrée d'API permet de recevoir les différents capteurs."
+      operationId: "sensorsGET"
+      parameters:
+      - name: "limit"
+        in: "query"
+        description: "La limite de Sensors renvoyés"
+        required: false
+        type: "integer"
+        format: "int32"
+      responses:
+        200:
+          description: "Un tableau de Sensor."
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Sensor"
+        default:
+          description: "Erreur inattendue."
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "Default"
   /sensors/{sensor_id}:
     get:
       summary: "Liste des mesures relevées par un capteur"

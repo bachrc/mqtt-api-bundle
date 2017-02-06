@@ -4,6 +4,10 @@ var url = require('url');
 
 var Default = require('./DefaultService');
 
+module.exports.sensorsGET = function sensorsGET (req, res, next) {
+    Default.sensorsGET(req.swagger.params, res, next);
+};
+
 module.exports.sensorsSensor_idGET = function sensorsSensor_idGET(req, res, next) {
     Default.sensorsSensor_idGET(req.swagger.params, res, next);
 };

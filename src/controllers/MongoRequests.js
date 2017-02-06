@@ -10,6 +10,23 @@ let Sensor = require('../model/Sensor');
 let Measure = require('../model/Measure');
 let mongoose = require('mongoose');
 
+function getSensors (args, res) {
+    let limit = parseInt(args.limit.value) || 50;
+
+    Sensor.find().
+    limit(limit).
+    sort("_id").
+    select("_id name location type").
+    exec((err, results) => {
+        if(err) {
+            res.end(Errors.error(3, "Erreur lors de la requête vers la base de données : \n" + JSON.stringify(err)));
+        } else {
+            console.log(results);
+            res.end(JSON.stringify(results, null, 4));
+        }
+    });
+}
+
 function getSensorBeforeMeasures (args, res) {
     let borne_inferieure = Date.parse(args.after.value) || new Date(0);
     let borne_superieure = Date.parse(args.before.value) || new Date(Date.now() + 1000 * 60 * 60);
@@ -93,20 +110,21 @@ function modifySensor(args, res) {
             update.location = args.location.value;
     }
 
-    Sensor.update({sensor_id : sensor_id}, update, {multi : false}, (err, numAffected) => {
+    Sensor.update({_id : sensor_id}, update, (err, numAffected) => {
         if(err) {
             res.end(Errors.error(3, "Erreur lors de la requête vers la base de données : \n" + JSON.stringify(err, null, 4)));
         } else {
             if(numAffected == 0) {
                 res.end(Returns.return(false, "La mise à jour n'a pas eu lieu."))
             } else {
-                res.end(Returns.return(true, "La mise a jour a été effectuée."))
+                return res.end(Returns.return(true, "La mise a jour a été effectuée."))
             }
         }
     });
 }
 
 module.exports = {
+    getSensors : getSensors,
     getMeasures : getSensorBeforeMeasures,
     modifySensor : modifySensor
 };
