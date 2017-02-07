@@ -1,6 +1,6 @@
 function Return (success, message)  {
     return JSON.stringify({
-        sucess : success,
+        success : success,
         message: message
     });
 }
