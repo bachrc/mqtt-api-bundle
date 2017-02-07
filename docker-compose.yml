@@ -2,6 +2,9 @@ version: '2'
 services:
   mosca:
     image: matteocollina/mosca
+    ports:
+      - "8081:80"
+      - "1883:1883"
 
   random-sensors:
     build: docker/randomsensors
@@ -12,8 +15,6 @@ services:
 
   mongodb:
     image: mongo
-    ports:
-      - "27017:27017"
 
   sensors-to-db:
     build: docker/sensorstodb
