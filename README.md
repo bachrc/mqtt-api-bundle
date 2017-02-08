@@ -13,7 +13,7 @@ instructions d'installation via [ce lien.](https://www.docker.com/products/docke
 Une fois votre acquisition faite, ouvrez votre terminal :
 
 ```bash
-git clone https://github.com/bachrc/mqtt-api-bundle
+git clone --recursive https://github.com/bachrc/mqtt-api-bundle
 cd mqtt-api-bundle
 docker-compose up
 ```
